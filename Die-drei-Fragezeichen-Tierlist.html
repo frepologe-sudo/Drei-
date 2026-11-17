@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die drei ??? – Tierlist aller Folgen</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a33; --panel2:#18213f; --line:#26305a;
+  --text:#e9ecf5; --muted:#8e97b8; --red:#e2232a; --blue:#2d7fe0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Outfit,system-ui,sans-serif}
+body{padding:18px 16px 60px;max-width:1500px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 24px;margin-bottom:16px}
+h1{font-weight:500;font-size:clamp(26px,3.6vw,38px);margin:0;letter-spacing:-.5px;line-height:1.05}
+h1 .q1,h1 .q2,h1 .q3{font-weight:600}
+h1 .q1{color:#fff}.q2{color:var(--blue)}.q3{color:var(--red)}
+.sub{color:var(--muted);font-size:14px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+button{transition:border-color .15s,background-color .15s,transform .1s;font:inherit;font-size:13px;font-weight:500;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+button:hover{border-color:#3d4a85}
+button:active{transform:scale(.97)}
+button.primary{background:var(--red);border-color:var(--red)}
+.progress{font-size:13px;color:var(--muted);width:100%}
+.bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--red));width:0;transition:width .3s}
+
+#tiers{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+.tier{display:flex;min-height:94px;border-bottom:1px solid var(--line)}
+.tier:last-child{border-bottom:0}
+.label{width:96px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#14110f;font-weight:500;letter-spacing:-.2px;font-size:22px;position:relative;padding:6px;text-align:center;word-break:break-word}
+.label span{outline:none;min-width:20px;cursor:text}
+.label .ctl{position:absolute;bottom:3px;left:0;right:0;display:flex;justify-content:center;gap:4px;opacity:0;transition:opacity .15s}
+
+.tier:hover .ctl,.tier:focus-within .ctl{opacity:1}
+.ctl button{padding:1px 6px;font-size:11px;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:5px}
+.drop{flex:1;display:flex;flex-wrap:wrap;align-content:flex-start;gap:6px;padding:7px;min-height:94px}
+.drop.over{background:rgba(45,127,224,.12)}
+.tier.target .drop{background:rgba(45,127,224,.07);cursor:pointer}
+.tier.target .label{box-shadow:inset -3px 0 0 var(--blue)}
+
+.poolhead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 10px}
+.poolhead h2{font-weight:500;font-size:18px;margin:0}
+input[type=search]{font:inherit;font-size:14px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:240px;flex:1;max-width:420px}
+select{font:inherit;font-size:13px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 8px}
+#pool{background:var(--panel);border:1px solid var(--line);border-radius:10px;min-height:120px}
+#pool.target{background:rgba(45,127,224,.07)}
+
+.tile{width:118px;height:64px;border-radius:6px;padding:6px 7px 5px;background:#0e1430;border:1px solid #2a3566;position:relative;cursor:grab;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;touch-action:manipulation}
+.tile::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--era)}
+.tile .no{font-weight:500;letter-spacing:.4px;font-size:11px;color:var(--era);letter-spacing:.3px}
+.tile .no b{color:#fff;font-weight:600}
+.tile .t{font-size:11.5px;line-height:1.2;font-weight:400;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tile.img{width:80px;height:80px;padding:0;background-size:cover;background-position:center;border-color:#000}
+.tile.img::before,.tile.img .t{display:none}
+.tile.img .no{position:absolute;right:2px;bottom:2px;background:rgba(0,0,0,.75);color:#fff;font-size:10px;padding:1px 4px;border-radius:4px;border-left:3px solid var(--era)}
+.tile.img .no span{display:none}
+.drop{}
+.covers{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--panel);border:1px dashed #3d4a85;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--muted)}
+.covers.has{border-style:solid}
+.covers b{color:var(--text)}
+.tile.sel{outline:2px solid #fff;box-shadow:0 0 0 4px var(--blue)}
+.tile.dragging{opacity:.35}
+.tile.hidden{display:none}
+.tile{transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s,border-color .18s,opacity .18s;will-change:transform}
+.tile:hover{border-color:#4a5aa0;transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.45)}
+.tile.sel{transform:translateY(-3px) scale(1.04);z-index:2}
+.tile{-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.tile.holding{transform:scale(.94);transition:transform .2s}
+.ghost{position:fixed;left:0;top:0;z-index:50;pointer-events:none;margin:0;transform-origin:center;box-shadow:0 14px 30px rgba(0,0,0,.6);opacity:.95;transition:none!important;animation:none!important}
+body.tdrag{user-select:none;-webkit-user-select:none}
+.tile.pop{animation:pop .32s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes pop{from{transform:scale(.85);opacity:.4}to{transform:none;opacity:1}}
+.ph{width:4px;min-height:64px;align-self:stretch;background:var(--blue);border-radius:2px;animation:phin .15s ease}
+@keyframes phin{from{opacity:0;transform:scaleY(.5)}to{opacity:1;transform:none}}
+.drop{transition:background-color .2s}
+.tier .drop{transition:background-color .2s,outline-color .2s}
+.label{transition:background-color .3s}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.hint{font-size:12.5px;color:var(--muted);margin-top:10px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:10;padding:16px;opacity:0;visibility:hidden;transition:opacity .2s,visibility 0s .2s}
+.modal.open{opacity:1;visibility:visible;transition:opacity .2s}
+.modal .box{transform:translateY(10px) scale(.97);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.modal.open .box{transform:none}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;max-width:560px;width:100%}
+.box h3{margin:0 0 10px}
+.box textarea{width:100%;height:300px;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px;font:12.5px/1.45 ui-monospace,monospace}
+.box .row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translate(-50%,12px);transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1);z-index:20;background:#fff;color:#111;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.cnt{color:var(--muted);font-weight:400;font-size:.85em}
+.traybtn{display:none}
+.mob-t{display:none}
+.hint .mob{display:none}
+@media (max-width:700px){
+  body{padding:12px 10px 300px}
+  header{gap:10px;margin-bottom:12px}
+  .sub{font-size:13px}
+  .toolbar{margin-left:0;width:100%}
+  .toolbar button{flex:1;padding:9px 6px;font-size:12.5px}
+  .covers{padding:9px 10px;font-size:12.5px;gap:8px}
+  .tier{min-height:76px}
+  .label{width:76px;padding:4px 3px;word-break:normal;overflow-wrap:normal;hyphens:none}
+  .drop{min-height:76px;padding:5px;gap:5px}
+  .tile{width:94px;height:58px}
+  .tile.img{width:62px;height:62px}
+  .tile .t{-webkit-line-clamp:2;font-size:11px}
+  .tile .no{font-size:10px}
+  .tile:hover{transform:none;box-shadow:none}
+  .label .ctl{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;left:3px;right:3px;bottom:3px;opacity:0;pointer-events:none}
+  .tier:focus-within .label .ctl{opacity:1;pointer-events:auto}
+  .ctl button{padding:3px 0;font-size:11px}
+  .hint .mob{display:inline}.hint .desk{display:none}
+  .legend{display:none}
+  #tray{position:fixed;left:0;right:0;bottom:0;z-index:5;background:rgba(13,19,40,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.45);padding:8px 10px calc(10px + env(safe-area-inset-bottom));transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  #tray::before{content:"";display:block;width:38px;height:4px;border-radius:2px;background:#3a4677;margin:0 auto 8px}
+  #tray .poolhead{margin:0 0 8px;gap:8px;flex-wrap:nowrap}
+  #tray .poolhead h2{font-size:14px;white-space:nowrap}
+  #tray input[type=search]{min-width:0;flex:1;padding:7px 10px;font-size:14px}
+  #tray select{display:none}
+  .desk-t{display:none}.mob-t{display:inline}
+  .traybtn{order:3;display:block;flex:none;padding:6px 10px;font-size:14px;transition:transform .25s}
+  #pool{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:max-content;overflow-x:auto;overflow-y:hidden;gap:6px;padding:6px;min-height:0;border-radius:10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;transition:max-height .3s,padding .3s,opacity .2s;max-height:160px}
+  #pool::-webkit-scrollbar{display:none}
+  #pool .tile{scroll-snap-align:start}
+  #tray.min #pool{max-height:0;padding:0 6px;opacity:0}
+  #tray.min .traybtn{transform:rotate(180deg)}
+  .tile.sel{transform:scale(1.06)}
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Die drei <span class="q1">?</span><span class="q2">?</span><span class="q3">?</span> Tierlist</h1>
+    <div class="sub">Alle 241 Hörspielfolgen – ziehen, ablegen, ranken.</div>
+  </div>
+  <div class="toolbar">
+    <button id="addTier">+ Stufe</button>
+    <button id="exportBtn">Als Text kopieren</button>
+    <button id="resetBtn">Zurücksetzen</button>
+  </div>
+  <div class="progress"><span id="progTxt"></span><div class="bar"><i id="progBar"></i></div></div>
+</header>
+
+<div class="covers" id="covers">
+  <span id="covTxt"><b>Cover anzeigen:</b> Lade deine 3 Screenshots (die Cover-Übersichten) hier hoch – die Seite schneidet die Cover automatisch aus. Alles bleibt in deinem Browser.</span>
+  <label><button type="button" id="covBtn" class="primary">Screenshots wählen</button><input type="file" id="covFile" accept="image/*" multiple hidden></label>
+  <button type="button" id="covClear" hidden>Cover entfernen</button>
+</div>
+<div id="tiers"></div>
+
+<section id="tray">
+<div class="poolhead">
+  <h2><span class="desk-t">Noch nicht eingeordnet</span><span class="mob-t">Offen</span> <span id="poolCount" class="cnt"></span></h2><button type="button" id="trayToggle" class="traybtn" aria-label="Leiste ein-/ausklappen">▾</button>
+  <input type="search" id="search" placeholder="Folge suchen (Titel oder Nummer) …">
+  <select id="era">
+    <option value="all">Alle Folgen</option>
+    <option value="0">Klassiker 1–39</option>
+    <option value="1">40–99</option>
+    <option value="2">100–149</option>
+    <option value="3">150–199</option>
+    <option value="4">200+</option>
+  </select>
+</div>
+<div id="pool" class="drop"></div>
+</section>
+<div class="legend" id="legend"></div>
+<div class="hint"><span class="mob">Folge gedrückt halten und ziehen – oder antippen und dann die Stufe antippen. Antippen einer Folge in einer Stufe fügt davor ein. Zum Umbenennen auf den Stufennamen tippen.</span><span class="desk">Desktop: Folgen per Drag &amp; Drop verschieben. Handy: Folge antippen, dann auf die gewünschte Stufe (oder eine andere Folge, um davor einzufügen) tippen. Stufennamen lassen sich anklicken und umbenennen, der Farbpunkt wechselt die Farbe. Dein Ranking wird in diesem Browser gespeichert.</span></div>
+
+<div class="modal" id="modal"><div class="box">
+  <h3 id="mTitle"></h3>
+  <div id="mBody"></div>
+  <div class="row" id="mRow"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const TITLES = ["und der Super-Papagei","und der Phantomsee","und der Karpatenhund","und die schwarze Katze","und der Fluch des Rubins","und der sprechende Totenkopf","und der unheimliche Drache","und der grüne Geist","und die rätselhaften Bilder","und die flüsternde Mumie","und das Gespensterschloss","und der seltsame Wecker","und der lachende Schatten","und das Bergmonster","und der rasende Löwe","und der Zauberspiegel","und die gefährliche Erbschaft","und die Geisterinsel","und der Teufelsberg","und die flammende Spur","und der tanzende Teufel","und der verschwundene Schatz","und das Aztekenschwert","und die silberne Spinne","und die singende Schlange","und die Silbermine","und der magische Kreis","und der Doppelgänger","Die Originalmusik","und das Riff der Haie","und das Narbengesicht","und der Ameisenmensch","und die bedrohte Ranch","und der rote Pirat","und der Höhlenmensch","und der Super-Wal","und der heimliche Hehler","und der unsichtbare Gegner","und die Perlenvögel","und der Automarder","und das Volk der Winde","und der weinende Sarg","und der höllische Werwolf","und der gestohlene Preis","und das Gold der Wikinger","und der schrullige Millionär","und der giftige Gockel","und die gefährlichen Fässer","und die Comic-Diebe","und der verschwundene Filmstar","und der riskante Ritt","und die Musikpiraten","und die Automafia","Gefahr im Verzug","Gekaufte Spieler","Angriff der Computer-Viren","Tatort Zirkus","und der verrückte Maler","Giftiges Wasser","Dopingmixer","und die Rache des Tigers","Spuk im Hotel","Fußball-Gangster","Geisterstadt","Diamantenschmuggel","und die Schattenmänner","und das Geheimnis der Särge","und der Schatz im Bergsee","Späte Rache","Schüsse aus dem Dunkel","Die verschwundene Seglerin","Dreckiger Deal","Poltergeist","und das brennende Schwert","Die Spur des Raben","Stimmen aus dem Nichts","Pistenteufel","Das leere Grab","Im Bann des Voodoo","Geheimakte Ufo","Verdeckte Fouls","Die Karten des Bösen","Meuterei auf hoher See","Musik des Teufels","Feuerturm","Nacht in Angst","Wolfsgesicht","Vampir im Internet","Tödliche Spur","Der Feuerteufel","Labyrinth der Götter","Todesflug","und das Geisterschiff","Das schwarze Monster","Botschaft von Geisterhand","und der rote Rächer","Insektenstachel","Tal des Schreckens","Rufmord","Toteninsel","und das Hexen-Handy","Doppelte Täuschung","Das Erbe des Meisterdiebes","Gift per E-Mail","und der Nebelberg","Der Mann ohne Kopf","und der Schatz der Mönche","Die sieben Tore","Gefährliches Quiz","Panik im Park","Die Höhle des Grauens","Schlucht der Dämonen","Das Auge des Drachen","Die Villa der Toten","Auf tödlichem Kurs","Codename: Cobra","Der finstere Rivale","Das düstere Vermächtnis","Der geheime Schlüssel","Der schwarze Skorpion","Spur ins Nichts","und der Geisterzug","Fußballfieber","Geister-Canyon","Feuermond","Schrecken aus dem Moor","Schwarze Madonna","Schatten über Hollywood","SMS aus dem Grab","Der Fluch des Drachen","Haus des Schreckens","Spuk im Netz","Fels der Dämonen","Der tote Mönch","Fluch des Piraten","und das versunkene Dorf","Pfad der Angst","Die geheime Treppe","Das Geheimnis der Diva","Stadt der Vampire","und die Fußball-Falle","Tödliches Eis","und die Poker-Hölle","Zwillinge der Finsternis","und die Rache der Samurai","Der Biss der Bestie","Grusel auf Campbell Castle","und die feurige Flut","Der namenlose Gegner","Geisterbucht","Schwarze Sonne","Skateboardfieber","und das Fußballphantom","Botschaft aus der Unterwelt","und der Meister des Todes","Im Netz des Drachen","Im Zeichen der Schlangen","und der Feuergeist","Nacht der Tiger","Geheimnisvolle Botschaften","Die blutenden Bilder","und der schreiende Nebel","und der verschollene Pilot","Fußball-Teufel","Im Schatten des Giganten","und die brennende Stadt","und das blaue Biest","GPS-Gangster","Die Spur des Spielers","Straße des Grauens","und das Phantom aus dem Meer","und der Eisenmann","Dämon der Rache","und das Tuch der Toten","Schattenwelt","und der gestohlene Sieg","Der Geist des Goldgräbers","Der gefiederte Schrecken","Die Rache des Untoten","und die flüsternden Puppen","Das Kabinett des Zauberers","Im Haus des Henkers","und der letzte Song","und der Hexengarten","und der Mann ohne Augen","Insel des Vergessens","und das silberne Amulett","Signale aus dem Jenseits","und der unsichtbare Passagier","und die Kammer der Rätsel","Verbrechen im Nichts","Im Bann des Drachen","Schrecken aus der Tiefe","und die Zeitreisende","Im Reich der Ungeheuer","Geheimnis des Bauchredners","Im Auge des Sturms","Die Legende der Gaukler","und der grüne Kobold","Feuriges Auge","Höhenangst","Das weiße Grab","Tauchgang ins Ungewisse","Der dunkle Wächter","Das rätselhafte Erbe","und der Mottenmann","Die falschen Detektive","Kelch des Schicksals","Kreaturen der Nacht","und die schweigende Grotte","und der Jadekönig","und der weiße Leopard","Der Fluch der Medusa","und der Geisterbunker","und die verlorene Zeit","Die Schwingen des Unheils","und der Kristallschädel","Im Netz der Lügen","und die Teufelsklippe","Im Wald der Gefahren","Manuskript des Satans","und die Gesetzlosen","und der Knochenmann","Die Yacht des Verrats","und der Puppenmacher","Die Spur der Toten","Melodie der Rache","Der Ruf der Krähen","Drehbuch der Täuschung","Der Tag der Toten","und der Dreiäugige Schakal","Die Stadt aus Gold","Die Nacht der Gewitter","und der lebende Tresor","und das Fantasmofon","Im Bann des Barrakudas","und der rote Büffel","Falsche Schuld","Das Geheimnis der sieben Palmen","und die schwarze Rose","Meister des Lichts"];
+
+const ERAS = [
+  {name:"1–39", max:39, c:"#f5c542"},
+  {name:"40–99", max:99, c:"#ff7a45"},
+  {name:"100–149", max:149, c:"#e2232a"},
+  {name:"150–199", max:199, c:"#b05cff"},
+  {name:"200+", max:9999, c:"#2d7fe0"}
+];
+const eraOf = n => ERAS.findIndex(e => n <= e.max);
+const COLORS = ["#ffd23f","#6fdc7a","#a8e463","#d6ea5c","#fff06a","#ffc85a","#ff9152","#ff5a5a","#7fbfff","#bf7fff","#cfcfcf"];
+const DEFAULT_TIERS = [["🏆","#ffd23f"],["Top 5","#6fdc7a"],["Top 10","#a8e463"],["Exzellent","#d6ea5c"],["Gut","#fff06a"],["Meh","#ffc85a"],["Schlecht","#ff9152"],["Fatal","#ff5a5a"]];
+const KEY = "ddf-tierlist-v1";
+
+let state;
+function fresh(){
+  return {tiers: DEFAULT_TIERS.map(([n,c],i)=>({id:"t"+i+Date.now(), name:n, color:c, items:[]})),
+          pool: TITLES.map((_,i)=>i+1)};
+}
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if(s && s.tiers && s.pool && s.tiers.map(t=>t.name).join()==="S,A,B,C,D,F"){
+      return fresh();
+    }
+    if(s && s.tiers && s.pool){
+      const seen = new Set([...s.pool, ...s.tiers.flatMap(t=>t.items)]);
+      TITLES.forEach((_,i)=>{ if(!seen.has(i+1)) s.pool.push(i+1); });
+      return s;
+    }
+  }catch(e){}
+  return fresh();
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+state = load();
+
+const $ = s => document.querySelector(s);
+const tiersEl = $("#tiers"), poolEl = $("#pool");
+let selected = null;
+
+function tileEl(n){
+  const d = document.createElement("div");
+  d.className = "tile"; d.draggable = !matchMedia("(pointer:coarse)").matches; d.dataset.n = n;
+  d.style.setProperty("--era", ERAS[eraOf(n)].c);
+  d.title = `Folge ${n}: ${TITLES[n-1]}`;
+  d.innerHTML = `<div class="no"><span>FOLGE </span><b>${String(n).padStart(3,"0")}</b></div><div class="t"></div>`;
+  d.querySelector(".t").textContent = TITLES[n-1];
+  if(typeof covers!=="undefined" && covers[n]){ d.classList.add("img"); d.style.backgroundImage = `url(${covers[n]})`; }
+  return d;
+}
+
+function render(){
+  tiersEl.innerHTML = "";
+  state.tiers.forEach((t, idx) => {
+    const row = document.createElement("div");
+    row.className = "tier"; row.dataset.id = t.id;
+    const lab = document.createElement("div");
+    lab.className = "label"; lab.style.background = t.color;
+    const sp = document.createElement("span");
+    try{ sp.contentEditable = "plaintext-only"; }catch(e){} if(sp.contentEditable!=="plaintext-only") sp.contentEditable = "true"; sp.spellcheck = false; sp.textContent = t.name;
+    const fit = () => { const L=[...sp.textContent].length; const m = innerWidth<=700; lab.style.fontSize = /\p{Extended_Pictographic}/u.test(sp.textContent)&&L<=2 ? (m?"30px":"36px") : L<=2 ? (m?"22px":"26px") : L<=6 ? (m?"16px":"21px") : (m?"13.5px":"17px"); };
+    fit(); sp.addEventListener("input", fit);
+    sp.addEventListener("input", () => { t.name = sp.textContent; save(); });
+    sp.addEventListener("blur", () => { if(!sp.textContent.trim()){ sp.textContent = t.name = "?"; fit(); save(); } });
+    sp.addEventListener("keydown", e => { if(e.key==="Enter"){ e.preventDefault(); sp.blur(); }});
+    lab.appendChild(sp);
+    const ctl = document.createElement("div"); ctl.className = "ctl";
+    const mk = (txt, title, fn) => { const b=document.createElement("button"); b.textContent=txt; b.title=title; b.onclick=e=>{e.stopPropagation();fn();}; ctl.appendChild(b); };
+    mk("●","Farbe wechseln",()=>{ t.color = COLORS[(COLORS.indexOf(t.color)+1)%COLORS.length]; save(); render(); });
+    mk("↑","Nach oben",()=>swapTiers(idx, idx-1));
+    mk("↓","Nach unten",()=>swapTiers(idx, idx+1));
+    mk("✕","Stufe löschen",()=>{ state.pool.push(...t.items); state.tiers.splice(idx,1); save(); render(); });
+    lab.appendChild(ctl);
+    const drop = document.createElement("div");
+    drop.className = "drop"; drop.dataset.zone = t.id;
+    t.items.forEach(n => drop.appendChild(tileEl(n)));
+    row.append(lab, drop);
+    tiersEl.appendChild(row);
+  });
+  poolEl.innerHTML = ""; poolEl.dataset.zone = "pool";
+  [...state.pool].sort((a,b)=>a-b).forEach(n => poolEl.appendChild(tileEl(n)));
+  state.pool.sort((a,b)=>a-b);
+  applyFilter(); updateProgress(); setTargets(); if(typeof updateCoverBar==="function") updateCoverBar();
+}
+
+function snapshot(){
+  const m = new Map(), vh = innerHeight;
+  document.querySelectorAll(".tile:not(.hidden)").forEach(el => { const r = el.getBoundingClientRect(); if(r.bottom > -100 && r.top < vh+100) m.set(el.dataset.n, r); });
+  return m;
+}
+function animateFrom(prev, movedN){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.querySelectorAll(".tile:not(.hidden)").forEach(el => {
+    const r0 = prev.get(el.dataset.n);
+    if(+el.dataset.n === movedN && !r0){ el.classList.add("pop"); return; }
+    if(!r0) return;
+    const r = el.getBoundingClientRect();
+    const dx = r0.left - r.left, dy = r0.top - r.top;
+    if(Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+    if(Math.abs(dy) > innerHeight*1.5) return;
+    el.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:"none"}],{duration:300,easing:"cubic-bezier(.2,.8,.2,1)"});
+  });
+}
+function moveAndRender(n, zone, before){
+  const prev = snapshot();
+  move(n, zone, before);
+  selected = null; render();
+  animateFrom(prev, n);
+}
+function swapTiers(a, b){
+  if(b<0 || b>=state.tiers.length) return;
+  const prev = new Map([...document.querySelectorAll(".tier")].map(r=>[r.dataset.id, r.getBoundingClientRect().top]));
+  [state.tiers[a],state.tiers[b]] = [state.tiers[b],state.tiers[a]]; save(); render();
+  document.querySelectorAll(".tier").forEach(r => { const t0 = prev.get(r.dataset.id); if(t0==null) return; const dy = t0 - r.getBoundingClientRect().top; if(dy) r.animate([{transform:`translateY(${dy}px)`},{transform:"none"}],{duration:280,easing:"cubic-bezier(.2,.8,.2,1)"}); });
+}
+function listFor(zone){ return zone==="pool" ? state.pool : state.tiers.find(t=>t.id===zone).items; }
+function move(n, zone, beforeN){
+  state.pool = state.pool.filter(x=>x!==n);
+  state.tiers.forEach(t => t.items = t.items.filter(x=>x!==n));
+  const list = listFor(zone);
+  const i = beforeN!=null ? list.indexOf(beforeN) : -1;
+  if(i>=0) list.splice(i,0,n); else list.push(n);
+  save();
+}
+
+if(innerWidth<=700) $("#search").placeholder = "Suchen …";
+$("#trayToggle").onclick = e => { e.stopPropagation(); $("#tray").classList.toggle("min"); };
+function updateProgress(){
+  $("#poolCount").textContent = `(${state.pool.length})`;
+  const total = TITLES.length, done = total - state.pool.length;
+  $("#progTxt").textContent = `${done} von ${total} Folgen eingeordnet`;
+  $("#progBar").style.width = (done/total*100)+"%";
+}
+
+function applyFilter(){
+  const q = $("#search").value.trim().toLowerCase();
+  const era = $("#era").value;
+  poolEl.querySelectorAll(".tile").forEach(el => {
+    const n = +el.dataset.n;
+    const okQ = !q || TITLES[n-1].toLowerCase().includes(q) || String(n)===q.replace(/^0+/,"");
+    const okE = era==="all" || eraOf(n)===+era;
+    el.classList.toggle("hidden", !(okQ && okE));
+  });
+}
+$("#search").addEventListener("input", applyFilter);
+$("#era").addEventListener("change", applyFilter);
+
+/* ---------- Drag & Drop (Desktop) ---------- */
+let dragN = null, ph = document.createElement("div"); ph.className = "ph";
+document.addEventListener("dragstart", e => {
+  const t = e.target.closest?.(".tile"); if(!t) return;
+  dragN = +t.dataset.n; t.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", dragN);
+});
+document.addEventListener("dragend", e => {
+  document.querySelectorAll(".dragging").forEach(x=>x.classList.remove("dragging"));
+  document.querySelectorAll(".over").forEach(x=>x.classList.remove("over"));
+  ph.remove(); dragN = null;
+});
+function zoneFrom(el){ if(!el || !el.closest) return null; const z = el.closest("[data-zone]"); if(z) return z; const t = el.closest(".tier"); return t ? t.querySelector(".drop") : null; }
+function tileAfter(zone, x, y){
+  const tiles = [...zone.querySelectorAll(".tile:not(.dragging):not(.hidden)")];
+  for(const t of tiles){
+    const r = t.getBoundingClientRect();
+    if(y < r.top) return t;
+    if(y <= r.bottom && x < r.left + r.width/2) return t;
+  }
+  return null;
+}
+document.addEventListener("dragover", e => {
+  if(dragN==null){ if(e.dataTransfer && [...e.dataTransfer.types].includes("Files")) e.preventDefault(); return; }
+  const z = zoneFrom(e.target);
+  if(!z){ document.querySelectorAll(".over").forEach(x=>x.classList.remove("over")); ph.remove(); return; }
+  e.preventDefault();
+  document.querySelectorAll(".over").forEach(x=>x!==z&&x.classList.remove("over"));
+  z.classList.add("over");
+  if(z.id === "pool"){ ph.remove(); return; }
+  const after = tileAfter(z, e.clientX, e.clientY);
+  if(after) z.insertBefore(ph, after); else z.appendChild(ph);
+});
+document.addEventListener("drop", e => {
+  if(dragN==null){ if(e.dataTransfer && e.dataTransfer.files.length && !e.target.closest("#covers")){ e.preventDefault(); importShots([...e.dataTransfer.files]); } return; }
+  const z = zoneFrom(e.target); if(!z) return;
+  e.preventDefault();
+  let before = null;
+  if(z.id !== "pool"){ let nx = ph.nextElementSibling; while(nx && (nx.classList.contains("dragging") || !nx.classList.contains("tile"))) nx = nx.nextElementSibling; before = nx ? +nx.dataset.n : null; }
+  const n = dragN; ph.remove();
+  moveAndRender(n, z.dataset.zone, before);
+});
+
+
+/* ---------- Ziehen per Finger (Handy) ---------- */
+let tDrag = null, ghost = null, suppressClick = false, scrollRAF = null, lastPt = null;
+function hoverAt(x, y){
+  const z = zoneFrom(document.elementFromPoint(x, y));
+  document.querySelectorAll(".over").forEach(o => o!==z && o.classList.remove("over"));
+  if(!z){ ph.remove(); return null; }
+  z.classList.add("over");
+  if(z.id === "pool"){ ph.remove(); return z; }
+  const after = tileAfter(z, x, y);
+  if(after){ if(ph.nextElementSibling !== after) z.insertBefore(ph, after); } else if(z.lastElementChild !== ph) z.appendChild(ph);
+  return z;
+}
+function startTouchDrag(){
+  if(!tDrag) return;
+  tDrag.active = true; dragN = tDrag.n; selected = null; setTargets();
+  const r = tDrag.el.getBoundingClientRect();
+  ghost = tDrag.el.cloneNode(true); ghost.classList.remove("holding","sel","pop"); ghost.classList.add("ghost");
+  ghost.style.width = r.width+"px"; ghost.style.height = r.height+"px";
+  tDrag.ox = r.width/2; tDrag.oy = r.height/2;
+  document.body.appendChild(ghost); document.body.classList.add("tdrag");
+  tDrag.el.classList.remove("holding"); tDrag.el.classList.add("dragging");
+  try{ navigator.vibrate && navigator.vibrate(12); }catch(e){}
+  moveGhost(tDrag.sx, tDrag.sy);
+  scrollRAF = requestAnimationFrame(autoScroll);
+}
+function moveGhost(x, y){
+  lastPt = [x, y];
+  ghost.style.transform = `translate(${x - tDrag.ox}px, ${y - tDrag.oy}px) scale(1.12) rotate(-2deg)`;
+  tDrag.zone = hoverAt(x, y);
+}
+function autoScroll(){
+  if(!tDrag || !tDrag.active) return;
+  const [x, y] = lastPt; const tray = $("#tray"); const trayFixed = getComputedStyle(tray).position === "fixed";
+  const bottomEdge = trayFixed ? tray.getBoundingClientRect().top : innerHeight;
+  if(y < bottomEdge - 70) tDrag.leftTray = true;
+  let dy = 0;
+  if(y < 70) dy = -Math.ceil((70 - y)/5);
+  else if(tDrag.leftTray && y > bottomEdge - 50 && y < bottomEdge) dy = Math.ceil((y - bottomEdge + 50)/5);
+  if(dy){ scrollBy(0, dy); tDrag.zone = hoverAt(x, y); }
+  scrollRAF = requestAnimationFrame(autoScroll);
+}
+function endTouchDrag(commit){
+  if(!tDrag) return;
+  clearTimeout(tDrag.timer); cancelAnimationFrame(scrollRAF);
+  tDrag.el.classList.remove("holding");
+  if(tDrag.active){
+    const z = commit ? tDrag.zone : null; let before = null;
+    if(z && z.id !== "pool"){ let nx = ph.nextElementSibling; while(nx && (nx.classList.contains("dragging") || !nx.classList.contains("tile"))) nx = nx.nextElementSibling; before = nx ? +nx.dataset.n : null; }
+    ghost && ghost.remove(); ghost = null; ph.remove();
+    document.body.classList.remove("tdrag");
+    document.querySelectorAll(".over,.dragging").forEach(o => o.classList.remove("over","dragging"));
+    const n = tDrag.n; tDrag = null; dragN = null;
+    if(z) moveAndRender(n, z.dataset.zone, before);
+    suppressClick = true; setTimeout(() => suppressClick = false, 400);
+  } else tDrag = null;
+}
+document.addEventListener("touchstart", e => {
+  const tile = e.target.closest(".tile");
+  if(!tile || e.touches.length > 1 || tile.classList.contains("ghost")) return;
+  const t = e.touches[0];
+  tDrag = {n:+tile.dataset.n, el:tile, sx:t.clientX, sy:t.clientY, active:false};
+  tile.classList.add("holding");
+  tDrag.timer = setTimeout(startTouchDrag, 230);
+}, {passive:true});
+document.addEventListener("touchmove", e => {
+  if(!tDrag) return;
+  const t = e.touches[0];
+  if(!tDrag.active){
+    if(Math.hypot(t.clientX - tDrag.sx, t.clientY - tDrag.sy) > 8){ clearTimeout(tDrag.timer); tDrag.el.classList.remove("holding"); tDrag = null; }
+    return;
+  }
+  e.preventDefault(); moveGhost(t.clientX, t.clientY);
+}, {passive:false});
+document.addEventListener("touchend", e => { if(tDrag && tDrag.active) e.preventDefault(); endTouchDrag(true); }, {passive:false});
+document.addEventListener("touchcancel", () => endTouchDrag(false));
+document.addEventListener("contextmenu", e => { if(e.target.closest(".tile")) e.preventDefault(); });
+
+/* ---------- Antippen (Handy) ---------- */
+function setTargets(){
+  document.querySelectorAll(".tier").forEach(r => r.classList.toggle("target", selected!=null));
+  poolEl.classList.toggle("target", selected!=null && !state.pool.includes(selected));
+  document.querySelectorAll(".tile").forEach(t => t.classList.toggle("sel", +t.dataset.n===selected));
+}
+document.addEventListener("click", e => {
+  if(suppressClick){ suppressClick = false; return; }
+  if(e.target.closest("button") || e.target.closest(".modal") || e.target.closest("#covers")) return;
+  if(e.target.closest(".label")){ if(selected!=null && !e.target.closest("[contenteditable]")){ moveAndRender(selected, e.target.closest(".tier").dataset.id, null); } return; }
+  const tile = e.target.closest(".tile");
+  const z = zoneFrom(e.target);
+  if(tile){
+    const n = +tile.dataset.n;
+    if(selected==null || selected===n){ selected = selected===n ? null : n; setTargets(); return; }
+    const zone = zoneFrom(tile).dataset.zone;
+    moveAndRender(selected, zone, zone==="pool" ? null : n); return;
+  }
+  if(z && selected!=null){ moveAndRender(selected, z.dataset.zone, null); return; }
+  if(selected!=null && !z){ selected = null; setTargets(); }
+});
+document.addEventListener("keydown", e => { if(e.key==="Escape"){ selected=null; setTargets(); closeModal(); }});
+
+/* ---------- Toolbar ---------- */
+$("#addTier").onclick = () => {
+  state.tiers.push({id:"t"+Date.now(), name:"Neu", color:COLORS[state.tiers.length % COLORS.length], items:[]});
+  save(); render();
+  const last = tiersEl.lastElementChild; last.animate([{opacity:0,transform:"translateY(-8px)"},{opacity:1,transform:"none"}],{duration:250,easing:"ease-out"});
+  const s = last.querySelector(".label span"); s.focus(); document.getSelection().selectAllChildren(s);
+};
+function openModal(title, bodyNode, buttons){
+  $("#mTitle").textContent = title;
+  const b = $("#mBody"); b.innerHTML = ""; if(bodyNode) b.appendChild(bodyNode);
+  const r = $("#mRow"); r.innerHTML = "";
+  buttons.forEach(([txt, cls, fn]) => { const x=document.createElement("button"); x.textContent=txt; if(cls) x.className=cls; x.onclick=fn; r.appendChild(x); });
+  $("#modal").classList.add("open");
+}
+function closeModal(){ $("#modal").classList.remove("open"); }
+$("#modal").addEventListener("click", e => { if(e.target.id==="modal") closeModal(); });
+let toastT; function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),2000); }
+
+$("#resetBtn").onclick = () => {
+  const p = document.createElement("p"); p.textContent = "Alle Folgen zurück in den Pool legen und die Stufen auf 🏆 bis Fatal zurücksetzen?"; p.style.color="var(--muted)";
+  openModal("Tierlist zurücksetzen", p, [["Abbrechen","",closeModal],["Zurücksetzen","primary",()=>{ state=fresh(); save(); selected=null; render(); closeModal(); }]]);
+};
+$("#exportBtn").onclick = () => {
+  const lines = ["Meine Die drei ??? Tierlist",""];
+  state.tiers.forEach(t => {
+    lines.push(`${t.name} (${t.items.length})`);
+    t.items.forEach(n => lines.push(`  ${String(n).padStart(3,"0")} – ${TITLES[n-1]}`));
+    lines.push("");
+  });
+  const txt = lines.join("\n");
+  const ta = document.createElement("textarea"); ta.value = txt; ta.readOnly = true;
+  openModal("Ranking als Text", ta, [["Schließen","",closeModal],["Kopieren","primary",async()=>{
+    try{ await navigator.clipboard.writeText(txt); toast("Kopiert!"); }
+    catch(e){ ta.select(); toast("Text markiert – mit Strg/Cmd+C kopieren"); }
+  }]]);
+};
+
+
+/* ---------- Cover aus eigenen Screenshots (lokal) ---------- */
+const SHOTS = [{w:1173,h:730},{w:1264,h:796},{w:748,h:139}];
+const CROP = {"1":[0,10,9],"2":[0,90,9],"3":[0,170,9],"4":[0,250,9],"5":[0,330,9],"6":[0,410,9],"7":[0,490,9],"8":[0,570,9],"9":[0,650,9],"10":[0,730,9],"11":[0,810,9],"12":[0,890,9],"14":[0,970,9],"13":[0,1050,9],"15":[0,10,89],"16":[0,90,89],"17":[0,170,89],"18":[0,250,89],"19":[0,330,89],"20":[0,410,89],"21":[0,490,89],"95":[0,570,89],"22":[0,650,89],"23":[0,730,89],"24":[0,810,89],"25":[0,890,89],"26":[0,970,89],"27":[0,1050,89],"28":[0,10,169],"29":[0,90,169],"30":[0,170,169],"31":[0,250,169],"32":[0,330,169],"33":[0,410,169],"34":[0,490,169],"35":[0,570,169],"36":[0,650,169],"37":[0,730,169],"38":[0,810,169],"39":[0,890,169],"40":[0,970,169],"41":[0,1050,169],"42":[0,10,249],"43":[0,90,249],"44":[0,170,249],"45":[0,250,249],"46":[0,330,249],"47":[0,410,249],"48":[0,490,249],"49":[0,570,249],"50":[0,650,249],"51":[0,730,249],"52":[0,810,249],"53":[0,890,249],"54":[0,970,249],"55":[0,1050,249],"56":[0,10,329],"57":[0,90,329],"58":[0,170,329],"59":[0,250,329],"60":[0,330,329],"61":[0,410,329],"62":[0,490,329],"63":[0,570,329],"64":[0,650,329],"65":[0,730,329],"66":[0,810,329],"67":[0,890,329],"68":[0,970,329],"69":[0,1050,329],"70":[0,10,409],"71":[0,90,409],"72":[0,170,409],"73":[0,250,409],"74":[0,330,409],"75":[0,410,409],"76":[0,490,409],"77":[0,570,409],"78":[0,650,409],"79":[0,730,409],"80":[0,810,409],"81":[0,890,409],"82":[0,970,409],"83":[0,1050,409],"84":[0,10,489],"85":[0,90,489],"86":[0,170,489],"87":[0,250,489],"88":[0,330,489],"89":[0,410,489],"90":[0,490,489],"91":[0,570,489],"92":[0,650,489],"93":[0,730,489],"94":[0,810,489],"96":[0,890,489],"97":[0,970,489],"98":[0,1050,489],"99":[0,10,569],"100":[0,90,569],"101":[0,170,569],"102":[0,250,569],"103":[0,330,569],"104":[0,410,569],"105":[0,490,569],"106":[0,570,569],"107":[0,730,569],"108":[0,810,569],"109":[0,890,569],"110":[0,970,569],"111":[0,1050,569],"112":[0,10,649],"113":[0,90,649],"114":[0,170,649],"115":[0,250,649],"117":[0,330,649],"116":[0,410,649],"118":[0,490,649],"119":[0,570,649],"120":[0,650,649],"121":[0,730,649],"122":[0,890,649],"123":[0,970,649],"124":[0,1050,649],"125":[1,63,-4],"126":[1,143,-4],"127":[1,223,-4],"128":[1,303,-4],"129":[1,383,-4],"130":[1,543,-4],"131":[1,623,-4],"132":[1,703,-4],"133":[1,783,-4],"134":[1,863,-4],"135":[1,943,-4],"136":[1,1023,-4],"137":[1,1103,-4],"138":[1,63,76],"139":[1,143,76],"140":[1,223,76],"141":[1,303,76],"142":[1,463,76],"143":[1,543,76],"144":[1,703,76],"145":[1,783,76],"146":[1,943,76],"147":[1,1023,76],"148":[1,1103,76],"149":[1,63,156],"150":[1,143,156],"151":[1,303,156],"152":[1,383,156],"153":[1,463,156],"154":[1,543,156],"155":[1,623,156],"156":[1,703,156],"157":[1,783,156],"158":[1,943,156],"159":[1,1103,156],"160":[1,63,236],"161":[1,143,236],"162":[1,223,236],"163":[1,303,236],"164":[1,383,236],"165":[1,463,236],"166":[1,543,236],"167":[1,623,236],"168":[1,783,236],"169":[1,863,236],"170":[1,943,236],"171":[1,1023,236],"172":[1,1103,236],"173":[1,63,316],"174":[1,143,316],"175":[1,223,316],"176":[1,303,316],"177":[1,383,316],"178":[1,463,316],"179":[1,623,316],"180":[1,703,316],"181":[1,863,316],"182":[1,943,316],"183":[1,1023,316],"184":[1,1103,316],"185":[1,63,396],"186":[1,143,396],"187":[1,303,396],"188":[1,463,396],"189":[1,623,396],"190":[1,703,396],"191":[1,783,396],"192":[1,863,396],"193":[1,943,396],"194":[1,1023,396],"195":[1,1103,396],"196":[1,143,476],"197":[1,223,476],"198":[1,303,476],"199":[1,383,476],"200":[1,463,476],"201":[1,543,476],"202":[1,703,476],"203":[1,783,476],"204":[1,943,476],"205":[1,1023,476],"206":[1,1103,476],"207":[1,63,556],"208":[1,303,556],"209":[1,383,556],"210":[1,463,556],"211":[1,543,556],"212":[1,623,556],"213":[1,703,556],"214":[1,783,556],"215":[1,863,556],"216":[1,943,556],"217":[1,1023,556],"218":[1,1103,556],"219":[1,143,636],"220":[1,223,636],"221":[1,383,636],"222":[1,463,636],"223":[1,543,636],"224":[1,703,636],"225":[1,783,636],"226":[1,863,636],"227":[1,943,636],"228":[1,1023,636],"229":[1,1103,636],"230":[1,63,716],"231":[1,143,716],"232":[1,303,716],"233":[1,383,716],"234":[1,463,716],"235":[1,623,716],"236":[1,863,716],"237":[2,162,8],"238":[2,322,8],"239":[2,402,8],"240":[2,562,8],"241":[2,642,8]};
+const CKEY = "ddf-tierlist-covers-v1";
+let covers = {};
+/* Speicher: IndexedDB (viel Platz), Fallback localStorage */
+const store = (() => {
+  let dbp = null;
+  const open = () => dbp || (dbp = new Promise((res, rej) => {
+    try{ const r = indexedDB.open("ddf-tierlist", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("kv");
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+    }catch(e){ rej(e); }
+  }));
+  const tx = async (mode, fn) => { const d = await open(); return new Promise((res, rej) => { const t = d.transaction("kv", mode); const q = fn(t.objectStore("kv")); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }); };
+  return { get: k => tx("readonly", s => s.get(k)), set: (k, v) => tx("readwrite", s => s.put(v, k)), del: k => tx("readwrite", s => s.delete(k)) };
+})();
+(async () => {
+  try{
+    let c = await store.get("covers");
+    if(!c){ const ls = localStorage.getItem(CKEY); if(ls){ c = JSON.parse(ls); await store.set("covers", c); localStorage.removeItem(CKEY); } }
+    if(c){ covers = c; render(); }
+  }catch(e){ try{ covers = JSON.parse(localStorage.getItem(CKEY)) || {}; render(); }catch(_){} }
+})();
+async function saveCovers(){
+  try{ await store.set("covers", covers); }
+  catch(e){ try{ localStorage.setItem(CKEY, JSON.stringify(covers)); }catch(_){ toast("Cover konnten nicht dauerhaft gespeichert werden"); } }
+}
+function shotIndex(img){
+  const r = img.naturalWidth/img.naturalHeight;
+  let best=-1, bd=1e9;
+  SHOTS.forEach((s,i)=>{ const d=Math.abs(s.w/s.h - r); if(d<bd){bd=d;best=i;} });
+  return bd < 0.06 ? best : -1;
+}
+function loadImg(file){ return new Promise((res,rej)=>{ const u=URL.createObjectURL(file); const im=new Image(); im.onload=()=>{ URL.revokeObjectURL(u); res(im); }; im.onerror=e=>{ URL.revokeObjectURL(u); rej(e); }; im.src=u; }); }
+
+/* Qualität: Ausschnitt in Originalauflösung, hochwertig hochskalieren, nachschärfen */
+const OUT_MIN = 200, OUT_MAX = 360;
+const canWebp = (() => { try{ const c=document.createElement("canvas"); c.width=c.height=1; return c.toDataURL("image/webp").startsWith("data:image/webp"); }catch(e){ return false; } })();
+function unsharp(ctx, w, h, amount){
+  const img = ctx.getImageData(0,0,w,h), s = img.data, b = new Uint8ClampedArray(s.length);
+  // 3x3 Weichzeichner (separierbar)
+  const tmp = new Float32Array(s.length);
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){ const i=(y*w+x)*4; const l=(y*w+Math.max(0,x-1))*4, r=(y*w+Math.min(w-1,x+1))*4;
+    for(let c=0;c<3;c++) tmp[i+c]=(s[l+c]+2*s[i+c]+s[r+c])/4; }
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){ const i=(y*w+x)*4; const u=(Math.max(0,y-1)*w+x)*4, d=(Math.min(h-1,y+1)*w+x)*4;
+    for(let c=0;c<3;c++) b[i+c]=(tmp[u+c]+2*tmp[i+c]+tmp[d+c])/4; }
+  for(let i=0;i<s.length;i+=4) for(let c=0;c<3;c++){ const v=s[i+c]+amount*(s[i+c]-b[i+c]); s[i+c]=v<0?0:v>255?255:v; }
+  ctx.putImageData(img,0,0);
+}
+function makeCover(im, sx, sy, sz){
+  const nat = Math.max(1, Math.round(sz));
+  const a = document.createElement("canvas"); a.width = a.height = nat;
+  const ac = a.getContext("2d"); ac.fillStyle="#000"; ac.fillRect(0,0,nat,nat);
+  const cy0 = Math.max(0, sy), ch = Math.min(im.naturalHeight, sy+sz) - cy0;
+  ac.drawImage(im, sx, cy0, sz, ch, 0, (cy0-sy)*nat/sz, nat, ch*nat/sz);
+  const out = Math.min(OUT_MAX, Math.max(OUT_MIN, nat));
+  let cur = a, size = nat;
+  while(size < out){ const next = Math.min(out, size*2); const c = document.createElement("canvas"); c.width = c.height = next;
+    const x = c.getContext("2d"); x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high"; x.drawImage(cur,0,0,next,next); cur = c; size = next; }
+  if(size > out){ const c = document.createElement("canvas"); c.width = c.height = out; const x = c.getContext("2d"); x.imageSmoothingQuality="high"; x.drawImage(cur,0,0,out,out); cur = c; size = out; }
+  const up = out / nat;
+  if(up > 1.2) unsharp(cur.getContext("2d"), size, size, Math.min(0.9, 0.35 * up));
+  return canWebp ? cur.toDataURL("image/webp", 0.9) : cur.toDataURL("image/jpeg", 0.9);
+}
+async function importShots(files){
+  const found = {};
+  for(const f of files){ try{ const im = await loadImg(f); const i = shotIndex(im); if(i>=0) found[i]=im; }catch(e){} }
+  if(!Object.keys(found).length){ toast("Screenshots nicht erkannt"); return; }
+  toast("Cover werden verarbeitet …");
+  await new Promise(r => setTimeout(r, 30));
+  let n = 0;
+  for(const [ep,[s,x,y]] of Object.entries(CROP)){
+    const im = found[s]; if(!im) continue;
+    const k = im.naturalWidth / SHOTS[s].w;
+    covers[ep] = makeCover(im, x*k, y*k, 80*k); n++;
+    if(n % 40 === 0) await new Promise(r => setTimeout(r, 0));
+  }
+  await saveCovers();
+  const miss = [0,1,2].filter(i=>!found[i]).length;
+  toast(`${n} Cover in HD geladen${miss? " – "+miss+" Screenshot(s) nicht erkannt":""}`);
+  render();
+}
+$("#covBtn").onclick = () => $("#covFile").click();
+$("#covFile").onchange = e => { importShots([...e.target.files]); e.target.value=""; };
+$("#covers").addEventListener("dragover", e => { if(dragN==null){ e.preventDefault(); } });
+$("#covers").addEventListener("drop", e => { if(dragN==null && e.dataTransfer.files.length){ e.preventDefault(); e.stopPropagation(); importShots([...e.dataTransfer.files]); } });
+$("#covClear").onclick = () => { covers = {}; try{ localStorage.removeItem(CKEY); }catch(e){} store.del("covers").catch(()=>{}); render(); };
+function updateCoverBar(){
+  const c = Object.keys(covers).length;
+  $("#covers").classList.toggle("has", c>0);
+  $("#covClear").hidden = c===0;
+  $("#covBtn").textContent = c ? "Neu laden" : "Screenshots wählen";
+  $("#covTxt").innerHTML = c ? `<b>${c} von ${TITLES.length} Covern</b> geladen (nur in deinem Browser).` : `<b>Cover anzeigen:</b> Lade deine 3 Screenshots (die Cover-Übersichten) hier hoch – die Seite schneidet die Cover automatisch aus. Alles bleibt in deinem Browser.`;
+}
+
+$("#legend").innerHTML = ERAS.map(e=>`<span><i style="background:${e.c}"></i>Folge ${e.name}</span>`).join("");
+render();
+</script>
+</body>
+</html>
